@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
+import 'package:provider/provider.dart';
+import 'providers/FortuneModel.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => FortuneModel(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -12,7 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Fortune Cookie',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
@@ -22,48 +28,22 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({super.key});
-
-  // my code - jenkins
-  String _currentFortune = "";
-
+  const MyHomePage({super.key});
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-  String _currentFortune = "";
-
-  final _fortuneList = [
-    "You will find a new match in Bumble",
-    "Cat is going to call you back",
-    "You're going to get a cool job",
-    "You're going to buy honda city",
-    "You're going to get a job in Chennai",
-  ];
-
-  void _randomFortune() {
-    var random = Random();
-    int fortune = random.nextInt(_fortuneList.length);
-    setState(() {
-      _currentFortune = _fortuneList[fortune];
-    });
-    print(_currentFortune);
-  }
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final fortune = Provider.of<FortuneModel>(
+      context,
+    );
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("Flutter Demo"),
+        title: Text("Fortune Cookie"),
       ),
       body: Center(
         child: Column(
@@ -84,16 +64,13 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  '${_currentFortune}',
+                  fortune.currentFortune,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
               ),
             ),
 
-            ElevatedButton(
-              onPressed: _randomFortune,
-              child: Text("Get Fortune"),
-            ),
+            ElevatedButton(onPressed: () => fortune.getMyFortune(), child: Text("Get Fortune")),
           ],
         ),
       ),
